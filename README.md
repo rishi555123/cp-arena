@@ -4,6 +4,21 @@ A members-only competitive-programming leaderboard. Members link their **LeetCod
 
 This is the **MVP**: build-order checkpoints 1–3 from [`docs/PROMPT.md`](docs/PROMPT.md) plus a seed script. What's skipped and where it plugs in: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
+## Tech stack
+
+Versions are the exact ones resolved in `package-lock.json`.
+
+| Area | What's used |
+|---|---|
+| **Frontend** (`apps/web`) | Next.js 16.4.6 (App Router, Turbopack), React 19.3.1 / React DOM 19.3.1, Tailwind CSS 4.3.5 (via `@tailwindcss/postcss` 4.3.5), Recharts 3.11.0, lucide-react 1.78.0. UI primitives are hand-written in the shadcn/ui style with class-variance-authority 0.7.1, clsx 2.1.1 and tailwind-merge 3.7.1 (no shadcn package installed). |
+| **Backend / auth** | Next.js server components and server actions (no separate API server); Auth.js via next-auth 5.0.0-beta.32 (`@auth/core` 0.41.3) with Google OAuth and a dev-only credentials login; JWT sessions; `server-only` 0.0.1. |
+| **Database / ORM** (`packages/db`) | PostgreSQL (`postgres:16-alpine` in `docker-compose.yml`, or any hosted Postgres such as Neon); Drizzle ORM 0.45.4 with the postgres.js driver (`postgres` 3.4.9); Drizzle Kit 0.31.11 for migrations; dotenv 17.4.2. |
+| **Worker / job queue** (`apps/worker`) | Plain Node process run with tsx 4.23.15; custom Postgres-backed queue (`sync_jobs` table, `FOR UPDATE SKIP LOCKED`) — no queue library installed. |
+| **Data sources** (`packages/adapters`) | No third-party client libraries; built-in `fetch` with our own rate limiter, backoff and circuit breaker. **Codeforces:** official REST API. **LeetCode:** public GraphQL endpoint. **CodeChef:** profile-page HTML scraper (regex parser, versioned `cc-html-v1`) plus its contest-list JSON endpoint. |
+| **Scoring** (`packages/scoring`) | Pure TypeScript, no runtime dependencies. |
+| **Testing** | Vitest 4.1.12 (unit tests, adapter tests on recorded fixtures, opt-in live smoke tests); cross-env 10.1.0 for the `LIVE=1` flag. |
+| **Monorepo / tooling** | npm workspaces (`apps/*`, `packages/*`); TypeScript 5.9.3; `@types/node` 22.20.5; Node ≥ 20.11 (`engines`). Internal packages ship TypeScript source and are compiled by Next (`transpilePackages`) or tsx. |
+
 ## Getting started
 
 ### Prerequisites
