@@ -1,0 +1,75 @@
+{
+ "status": "OK",
+ "result": [
+  {
+   "id": 2282,
+   "name": "Kotlin Heroes: Episode 15",
+   "type": "ICPC",
+   "phase": "BEFORE",
+   "frozen": false,
+   "durationSeconds": 9000,
+   "startTimeSeconds": 1796740500,
+   "relativeTimeSeconds": -1285747
+  },
+  {
+   "id": 2291,
+   "name": "ICPC 2026 Online Challenge 2 powered by Huawei",
+   "type": "IOI",
+   "phase": "BEFORE",
+   "frozen": false,
+   "durationSeconds": 1209600,
+   "startTimeSeconds": 1796727600,
+   "relativeTimeSeconds": -1272847
+  },
+  {
+   "id": 2286,
+   "name": "Kotlin Heroes: Practice 15",
+   "type": "ICPC",
+   "phase": "BEFORE",
+   "frozen": false,
+   "durationSeconds": 604800,
+   "startTimeSeconds": 1796135400,
+   "relativeTimeSeconds": -680647
+  },
+  {
+   "id": 2292,
+   "name": "Codeforces Round (Div. 3)",
+   "type": "ICPC",
+   "phase": "BEFORE",
+   "frozen": false,
+   "durationSeconds": 8100,
+   "startTimeSeconds": 1795790100,
+   "relativeTimeSeconds": -335348
+  },
+  {
+   "id": 2289,
+   "name": "Codeforces Round 1137 (Div. 2)",
+   "type": "CF",
+   "phase": "FINISHED",
+   "frozen": false,
+   "durationSeconds": 7200,
+   "startTimeSeconds": 1795338300,
+   "relativeTimeSeconds": 116453
+  },
+  {
+   "id": 2287,
+   "name": "Codeforces Round 1136 (Div. 1)",
+   "type": "CF",
+   "phase": "FINISHED",
+   "frozen": false,
+   "durationSeconds": 7200,
+   "startTimeSeconds": 1795271700,
+   "relativeTimeSeconds": 183053
+  },
+  {
+   "id": 2288,
+   "name": "Codeforces Round 1136 (Div. 2)",
+   "type": "CF",
+   "phase": "FINISHED",
+   "frozen": false,
+   "durationSeconds": 7200,
+   "startTimeSeconds": 1795271700,
+   "relativeTimeSeconds": 183053
+  }
+ ]
+}

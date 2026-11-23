@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/* shadcn/ui-style tokens. Dark is the default; `.light` on <html> switches. */
+@custom-variant light (&:where(.light, .light *));
+
+:root {
+  --background: oklch(0.16 0.01 260);
+  --foreground: oklch(0.96 0.005 260);
+  --card: oklch(0.2 0.012 260);
+  --card-foreground: var(--foreground);
+  --muted: oklch(0.26 0.012 260);
+  --muted-foreground: oklch(0.74 0.015 260);
+  --border: oklch(0.32 0.012 260);
+  --primary: oklch(0.78 0.14 85);
+  --primary-foreground: oklch(0.2 0.02 85);
+  --accent: oklch(0.28 0.02 260);
+  --ring: oklch(0.78 0.14 85);
+  --up: oklch(0.78 0.16 150);
+  --down: oklch(0.74 0.15 25);
+  --chart-1: oklch(0.72 0.15 250); /* codeforces */
+  --chart-2: oklch(0.8 0.15 75); /* leetcode */
+  --chart-3: oklch(0.7 0.13 30); /* codechef */
+  --chart-4: oklch(0.78 0.14 160);
+  color-scheme: dark;
+}
+
+.light {
+  --background: oklch(0.99 0.002 260);
+  --foreground: oklch(0.2 0.02 260);
+  --card: oklch(1 0 0);
+  --muted: oklch(0.95 0.005 260);
+  --muted-foreground: oklch(0.45 0.02 260);
+  --border: oklch(0.88 0.008 260);
+  --primary: oklch(0.55 0.15 70);
+  --primary-foreground: oklch(0.99 0 0);
+  --accent: oklch(0.94 0.01 260);
+  --ring: oklch(0.55 0.15 70);
+  --up: oklch(0.48 0.14 150);
+  --down: oklch(0.52 0.18 25);
+  --chart-1: oklch(0.5 0.17 250);
+  --chart-2: oklch(0.62 0.15 65);
+  --chart-3: oklch(0.52 0.15 30);
+  --chart-4: oklch(0.55 0.13 160);
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-ring: var(--ring);
+  --color-up: var(--up);
+  --color-down: var(--down);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "tnum";
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}

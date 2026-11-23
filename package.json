@@ -1,0 +1,27 @@
+{
+  "name": "cp-arena",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "dev": "npm run dev -w @cp-arena/web",
+    "build": "npm run build -w @cp-arena/web",
+    "start": "npm run start -w @cp-arena/web",
+    "db:generate": "npm run generate -w @cp-arena/db",
+    "db:migrate": "npm run migrate -w @cp-arena/db",
+    "db:reset": "npm run reset -w @cp-arena/db",
+    "seed": "npm run seed -w @cp-arena/db",
+    "worker": "npm run start -w @cp-arena/worker",
+    "sync:once": "npm run once -w @cp-arena/worker",
+    "spike": "npm run spike -w @cp-arena/worker",
+    "test": "npm run test --workspaces --if-present",
+    "test:live": "npm run test:live -w @cp-arena/adapters",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  }
+}

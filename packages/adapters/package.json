@@ -1,0 +1,26 @@
+{
+  "name": "@cp-arena/adapters",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./parse": "./src/parse.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:live": "cross-env LIVE=1 vitest run test/live.test.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@cp-arena/scoring": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "cross-env": "^10.1.0",
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.0"
+  }
+}
