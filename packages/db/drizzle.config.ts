@@ -1,4 +1,5 @@
 import { defineConfig } from "drizzle-kit";
+import "./src/load-env";
 import { databaseUrl } from "./src/env";
 
 export default defineConfig({

@@ -55,12 +55,12 @@ export const DEFAULT_CONFIG: ScoringConfig = {
   ccPerSolve: 2,
   problemsScale: 4000,
   momentum: { windowDays: 28, perContest: 60, perRatingPoint: 1, perWeightedSolve: 4, cap: 1000 },
-  // Calibrated against the seed population so each band holds ~15–30% at launch.
-  // Re-check against real members before announcing (docs/SCORING.md#divisions).
+  // Fixed bands. These defaults match the seed population (~20% each); at launch run
+  // `npm run calibrate -- --apply` on real members (docs/SCORING.md#ranking).
   divisions: [
-    { name: "Diamond", min: 470 },
-    { name: "Platinum", min: 420 },
-    { name: "Gold", min: 365 },
+    { name: "Diamond", min: 500 },
+    { name: "Platinum", min: 440 },
+    { name: "Gold", min: 390 },
     { name: "Silver", min: 320 },
     { name: "Bronze", min: 0 },
   ],

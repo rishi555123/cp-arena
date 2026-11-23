@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,15 +9,11 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#1a1b23" };
 
-// Applies the saved theme before paint (dark by default).
-const themeScript = `try{if(localStorage.getItem('theme')==='light')document.documentElement.classList.add('light')}catch(e){}`;
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Dark by default; the toggle stores "light" in a cookie so the server renders the right class (no flash, no inline script).
+  const light = (await cookies()).get("theme")?.value === "light";
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
+    <html lang="en" className={light ? "light" : undefined} suppressHydrationWarning>
       <body className="min-h-dvh antialiased">{children}</body>
     </html>
   );

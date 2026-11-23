@@ -4,9 +4,7 @@
  *   npm run spike
  */
 import { CodechefAdapter, CodeforcesAdapter, LeetcodeAdapter, type PlatformAdapter } from "@cp-arena/adapters";
-import { loadEnv } from "@cp-arena/db";
-
-loadEnv();
+import "@cp-arena/db/load-env";
 
 const HANDLES: [PlatformAdapter, string[]][] = [
   [new CodeforcesAdapter(), ["tourist", "Benq", "jiangly"]],

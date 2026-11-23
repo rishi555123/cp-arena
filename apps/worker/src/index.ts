@@ -7,11 +7,11 @@
  * TODO(next): swap the hand-rolled queue for pg-boss; incremental Codeforces user.status;
  * weekly CF user.ratedList refresh; post-contest backoff re-syncs; nightly snapshot at 00:05 IST.
  */
+import "@cp-arena/db/load-env";
 import { getAdapters, type PlatformAdapter, type Platform } from "@cp-arena/adapters";
-import { closeDb, enqueueAccountSync, getDb, loadEnv, platformAccounts, recomputeScores, syncAccount, syncContests, syncJobs, toDay, type Db } from "@cp-arena/db";
+import { closeDb, enqueueAccountSync, getDb, platformAccounts, recomputeScores, syncAccount, syncContests, syncJobs, toDay, type Db } from "@cp-arena/db";
 import { and, eq, lt, sql } from "drizzle-orm";
 
-loadEnv();
 const POLL_MS = Number(process.env.WORKER_POLL_SECONDS ?? 5) * 1000;
 const FULL_SYNC_MS = Number(process.env.WORKER_FULL_SYNC_HOURS ?? 6) * 3600_000;
 const CONTESTS_MS = 3600_000;

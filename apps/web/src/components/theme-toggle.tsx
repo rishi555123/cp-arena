@@ -5,9 +5,7 @@ import { Moon, Sun } from "lucide-react";
 export function ThemeToggle() {
   function toggle() {
     const light = document.documentElement.classList.toggle("light");
-    try {
-      localStorage.setItem("theme", light ? "light" : "dark");
-    } catch {}
+    document.cookie = `theme=${light ? "light" : "dark"}; path=/; max-age=31536000; samesite=lax`;
   }
   return (
     <button onClick={toggle} className="rounded-md p-2 hover:bg-accent" aria-label="Toggle light/dark mode" title="Toggle light/dark mode">

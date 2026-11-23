@@ -7,13 +7,15 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./schema": "./src/schema.ts"
+    "./schema": "./src/schema.ts",
+    "./load-env": "./src/load-env.ts"
   },
   "scripts": {
     "generate": "drizzle-kit generate",
     "migrate": "tsx scripts/migrate.ts",
     "seed": "tsx scripts/seed.ts",
     "reset": "tsx scripts/reset.ts",
+    "calibrate": "tsx scripts/calibrate.ts",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json"
   },

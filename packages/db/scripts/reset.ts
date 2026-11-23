@@ -1,4 +1,5 @@
 /** Drops everything in the public schema (local dev only), then re-run db:migrate + seed. */
+import "../src/load-env";
 import { sql } from "drizzle-orm";
 import { closeDb, getDb } from "../src/client";
 

@@ -17,6 +17,7 @@
     "db:migrate": "npm run migrate -w @cp-arena/db",
     "db:reset": "npm run reset -w @cp-arena/db",
     "seed": "npm run seed -w @cp-arena/db",
+    "calibrate": "npm run calibrate -w @cp-arena/db --",
     "worker": "npm run start -w @cp-arena/worker",
     "sync:once": "npm run once -w @cp-arena/worker",
     "spike": "npm run spike -w @cp-arena/worker",

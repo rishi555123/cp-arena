@@ -1,4 +1,4 @@
-import { DEFAULT_CONFIG, computePower, divisionFor, positiveRatingGain, rankEntries, type Platform, type PowerResult, type ScoringConfig } from "@cp-arena/scoring";
+import { DEFAULT_CONFIG, computePower, divisionFor, positiveRatingGain, rankEntries, type DivisionBand, type Platform, type PowerResult, type ScoringConfig } from "@cp-arena/scoring";
 import { and, desc, eq, gte, inArray, lt, notInArray, sql } from "drizzle-orm";
 import type { Db } from "./client";
 import { contestResults, platformAccounts, platformSnapshots, scoreSnapshots, scoringConfig, users } from "./schema";
@@ -7,6 +7,34 @@ const DAY_MS = 86_400_000;
 export const toDay = (d: Date) => d.toISOString().slice(0, 10);
 export const addDays = (day: string, n: number) => toDay(new Date(Date.parse(`${day}T00:00:00Z`) + n * DAY_MS));
 const endOfDay = (day: string) => new Date(Date.parse(`${day}T00:00:00Z`) + DAY_MS);
+
+/**
+ * Propose division bands from the latest day's Power distribution so each of the five bands holds
+ * ~20% of ranked members (cut points rounded down to a multiple of 5). Used by the seed and by
+ * `npm run calibrate` at launch. Returns null when there are too few members to calibrate.
+ */
+export async function proposeDivisions(db: Db, base: ScoringConfig = DEFAULT_CONFIG): Promise<DivisionBand[] | null> {
+  const rows = await db.execute<{ power: number }>(sql`select power from score_snapshots where day = (select max(day) from score_snapshots) order by power desc`);
+  const powers = rows.map((r) => Number(r.power));
+  const k = base.divisions.length;
+  if (powers.length < k * 3) return null;
+  const bands: DivisionBand[] = base.divisions.map((d, i) => {
+    if (i === k - 1) return { name: d.name, min: 0 };
+    const idx = Math.round((powers.length * (i + 1)) / k) - 1;
+    return { name: d.name, min: Math.floor(powers[idx] / 5) * 5 };
+  });
+  for (let i = 1; i < k - 1; i++) bands[i].min = Math.min(bands[i].min, bands[i - 1].min - 5);
+  return bands;
+}
+
+/** Make `config` the active scoring config (upserted by version). */
+export async function saveActiveConfig(db: Db, config: ScoringConfig, notes?: string): Promise<void> {
+  await db.update(scoringConfig).set({ active: false }).where(eq(scoringConfig.active, true));
+  await db
+    .insert(scoringConfig)
+    .values({ version: config.version, config, active: true, notes })
+    .onConflictDoUpdate({ target: scoringConfig.version, set: { config, active: true, notes } });
+}
 
 export async function loadActiveConfig(db: Db): Promise<ScoringConfig> {
   const [row] = await db.select().from(scoringConfig).where(eq(scoringConfig.active, true)).limit(1);

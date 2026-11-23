@@ -3,11 +3,12 @@
  * All seeded platform accounts are `synthetic` and are never synced against the real sites.
  * Deterministic (fixed PRNG seed) and idempotent: re-running wipes previous seed data first.
  */
+import "../src/load-env";
 import { DEFAULT_CONFIG, cfBucketKey, percentileFromTable, platformPercentile, tierFor, weightedFromBreakdown, type Platform } from "@cp-arena/scoring";
 import { eq, like, sql } from "drizzle-orm";
 import { closeDb, getDb } from "../src/client";
-import { addDays, recomputeScores, toDay } from "../src/scores";
-import { contestResults, contests, dailyActivity, inviteCodes, platformAccounts, platformSnapshots, scoreSnapshots, scoringConfig, users } from "../src/schema";
+import { addDays, proposeDivisions, recomputeScores, saveActiveConfig, toDay } from "../src/scores";
+import { contestResults, contests, dailyActivity, inviteCodes, platformAccounts, platformSnapshots, scoreSnapshots, users } from "../src/schema";
 
 const SEED_DOMAIN = "seed.cparena.local";
 const HISTORY_DAYS = 182;
@@ -87,8 +88,9 @@ const PERF_TABLE: Record<Platform, [number, number][]> = {
 
 async function main() {
   const db = getDb();
-  const now = new Date();
-  const today = toDay(now);
+  // History is anchored to 00:00 UTC today so re-runs on the same day are identical.
+  const today = toDay(new Date());
+  const now = new Date(`${today}T00:00:00Z`);
   const startDay = addDays(today, -HISTORY_DAYS);
   const start = new Date(`${startDay}T00:00:00Z`);
 
@@ -96,10 +98,6 @@ async function main() {
   await db.delete(users).where(like(users.email, `%@${SEED_DOMAIN}`));
   await db.delete(contests).where(eq(contests.source, "seed"));
 
-  await db
-    .insert(scoringConfig)
-    .values({ version: DEFAULT_CONFIG.version, config: DEFAULT_CONFIG, active: true, notes: "Initial formula (docs/SCORING.md)" })
-    .onConflictDoNothing();
   await db.insert(inviteCodes).values({ code: "ARENA2026", maxUses: 1000 }).onConflictDoNothing();
 
   const calendar = contestCalendar(start, now);
@@ -164,7 +162,7 @@ async function main() {
           verifyToken: verified ? null : "CPA-SEED00",
           tokenIssuedAt: joinDate,
           syncStatus: "ok",
-          lastSyncedAt: new Date(now.getTime() - Math.floor(rand() * 6 * 3600_000)),
+          lastSyncedAt: new Date(Date.now() - Math.floor(rand() * 6 * 3600_000)),
           synthetic: true,
           createdAt: joinDate,
         })
@@ -299,8 +297,15 @@ async function main() {
   console.log("Computing daily Power snapshots…");
   const days = Array.from({ length: HISTORY_DAYS + 1 }, (_, d) => addDays(startDay, d));
   await db.delete(scoreSnapshots).where(sql`${scoreSnapshots.day} >= ${startDay}`);
-  const res = await recomputeScores(db, days, DEFAULT_CONFIG);
+  let config = DEFAULT_CONFIG;
+  await recomputeScores(db, days, config);
+  // "Set bands so each holds ~15–30% at launch": calibrate on the seeded population, then recompute.
+  const bands = await proposeDivisions(db, config);
+  if (bands) config = { ...config, divisions: bands };
+  await saveActiveConfig(db, config, "Initial formula (docs/SCORING.md); divisions calibrated on seed data");
+  const res = await recomputeScores(db, days, config);
   console.log(`  ${res.rows} score snapshots over ${res.days} days.`);
+  console.log(`  Division bands: ${config.divisions.map((d) => `${d.name} ≥${d.min}`).join(", ")}`);
 
   // Sanity report: division spread today + biggest one-day rank move.
   const dist = await db.execute<{ division: string; n: number }>(sql`select division, count(*)::int as n from score_snapshots where day = ${today} group by division order by min(power) desc`);
