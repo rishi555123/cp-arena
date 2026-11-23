@@ -41,7 +41,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // JWT sessions: works with the dev Credentials provider and needs no adapter tables.
   session: { strategy: "jwt" },
   // `||` not `??`: .env.example ships `AUTH_SECRET=` (empty), which must still fall back in dev.
-  secret: process.env.AUTH_SECRET || (isProd ? undefined : "dev-insecure-secret-change-me"),
+  // Production never gets the fallback; instrumentation-node.ts refuses to start without a secret.
+  secret: process.env.AUTH_SECRET?.trim() || (isProd ? undefined : "dev-insecure-secret-change-me"),
   trustHost: true,
   pages: { signIn: "/signin" },
   callbacks: {
