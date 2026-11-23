@@ -49,7 +49,7 @@ export class CodeforcesAdapter implements PlatformAdapter {
   constructor(private client = new SourceClient("codeforces")) {}
 
   private async api<T>(method: string, params: Record<string, string | number>): Promise<T> {
-    const qs = new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)]));
+    const qs = new URLSearchParams(Object.entries(params).map(([k, v]): [string, string] => [k, String(v)]));
     const res = await this.client.request(`${API}/${method}?${qs}`, {}, (r) => {
       const ct = r.headers.get("content-type") ?? "";
       if (!ct.includes("json") && r.status !== 400) throw new AdapterError("codeforces", "blocked", `non-JSON response (${r.status})`);

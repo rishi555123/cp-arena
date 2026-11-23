@@ -176,6 +176,8 @@ export async function syncContests(db: Db, adapters: Record<Platform, PlatformAd
             .values(row)
             .onConflictDoUpdate({ target: [contests.platform, contests.externalId], set: { name: row.name, url: row.url, startTime: row.startTime, durationSeconds: row.durationSeconds, updatedAt: row.updatedAt } });
         }
+        // Live data supersedes the seeded placeholder calendar for this platform.
+        await db.delete(contests).where(and(eq(contests.platform, p), eq(contests.source, "seed")));
         out[p] = list.length;
         await recordSourceResult(db, p);
       } catch (err) {
