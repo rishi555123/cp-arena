@@ -236,6 +236,40 @@ export function platformPercentile(
   }
 }
 
+// ---------- "How to close the gap" estimates ----------
+
+export interface GainEstimate {
+  label: string;
+  /** estimated Power gain, assuming nothing else changes */
+  gain: number;
+}
+
+/**
+ * Formula-derived estimates for the next-target card. Contest strength is held constant
+ * (rating changes are unpredictable), so these are lower bounds for a good contest.
+ */
+export function estimateGains(c: Pick<PowerComponents, "momentum" | "weightedSolves" | "momentumInput">, config: ScoringConfig = DEFAULT_CONFIG): GainEstimate[] {
+  const w = config.weights;
+  const momentumAfter = (extra: Partial<MomentumInput>) =>
+    momentumPoints(
+      {
+        contests: c.momentumInput.contests + (extra.contests ?? 0),
+        ratingGain: c.momentumInput.ratingGain + (extra.ratingGain ?? 0),
+        weightedSolves: c.momentumInput.weightedSolves + (extra.weightedSolves ?? 0),
+      },
+      config,
+    );
+  const base = momentumPoints(c.momentumInput, config);
+  const solveGain = (wExtra: number) =>
+    w.problems * (problemPoints(c.weightedSolves + wExtra, config) - problemPoints(c.weightedSolves, config)) + w.momentum * (momentumAfter({ weightedSolves: wExtra }) - base);
+  return [
+    { label: "Enter one contest (any platform, any result)", gain: w.momentum * (momentumAfter({ contests: 1 }) - base) },
+    { label: "Enter a contest and gain +30 rating", gain: w.momentum * (momentumAfter({ contests: 1, ratingGain: 30 }) - base) },
+    { label: `Solve 5 LeetCode Mediums (+${5 * config.lcWeights.medium} weighted)`, gain: solveGain(5 * config.lcWeights.medium) },
+    { label: `Solve 3 Codeforces 1600–1900 problems (+${3 * (config.cfBuckets[2]?.weight ?? 3)} weighted)`, gain: solveGain(3 * (config.cfBuckets[2]?.weight ?? 3)) },
+  ].map((e) => ({ ...e, gain: round1(e.gain) }));
+}
+
 // ---------- Divisions & ranking ----------
 
 export function divisionFor(power: number, config: ScoringConfig = DEFAULT_CONFIG): string {

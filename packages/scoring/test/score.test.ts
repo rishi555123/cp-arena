@@ -8,6 +8,7 @@ import {
   computePower,
   contestStrength,
   divisionFor,
+  estimateGains,
   leetcodePercentile,
   leetcodeWeighted,
   momentumPoints,
@@ -180,6 +181,19 @@ describe("divisions and ranking", () => {
     ]);
     expect(ranked.map((r) => r.userId)).toEqual(["d", "b", "c", "a"]);
     expect(ranked.map((r) => r.rank)).toEqual([1, 2, 3, 4]);
+  });
+});
+
+describe("estimateGains", () => {
+  it("prices one contest at 0.2 × 60 when momentum isn't capped", () => {
+    const e = estimateGains({ momentum: 0, weightedSolves: 100, momentumInput: { contests: 0, ratingGain: 0, weightedSolves: 0 } });
+    expect(e[0].gain).toBe(12);
+    expect(e[1].gain).toBe(18);
+    expect(e[2].gain).toBeGreaterThan(12); // problems + momentum
+  });
+  it("is 0 for momentum-only actions when momentum is capped", () => {
+    const e = estimateGains({ momentum: 1000, weightedSolves: 100, momentumInput: { contests: 30, ratingGain: 0, weightedSolves: 0 } });
+    expect(e[0].gain).toBe(0);
   });
 });
 
