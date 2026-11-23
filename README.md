@@ -4,17 +4,65 @@ A members-only competitive-programming leaderboard. Members link their **LeetCod
 
 This is the **MVP**: build-order checkpoints 1–3 from [`docs/PROMPT.md`](docs/PROMPT.md) plus a seed script. What's skipped and where it plugs in: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
-## Quick start
+## Getting started
 
-Requires Node 20.11+ and Docker.
+### Prerequisites
+
+- **Node 20+** (20.11 or newer)
+- **A Postgres database**, either:
+  - **Docker** (runs Postgres locally via `docker-compose.yml`), or
+  - **Neon** (no install): create a free project at [neon.tech](https://neon.tech) and copy its connection string.
+
+### Setup
+
+Run these one per line, from the repo root. Windows PowerShell 5.1 doesn't support `&&`.
 
 ```bash
-docker compose up -d && npm install && npm run db:migrate && npm run seed && npm run dev
+copy .env.example .env
 ```
 
-Open http://localhost:3000 → **Dev login** → pick a seeded member (or "Arena Admin" for the sync-health page). To try onboarding, dev-login with any new email and use invite code `ARENA2026`.
+On Mac/Linux use `cp .env.example .env`. Then open `.env` and set `DATABASE_URL`:
 
-No `.env` is needed for local dev — every setting has a default (see [Assumptions](#assumptions)). To customise, `cp .env.example .env` at the repo root.
+- Neon: paste your connection string, e.g. `postgres://user:pass@ep-xxx.region.aws.neon.tech/neondb?sslmode=require`
+- Docker: keep the default `postgres://cparena:cparena@localhost:5432/cparena`
+
+```bash
+npm install
+```
+
+```bash
+npm run db:migrate
+```
+
+```bash
+npm run seed
+```
+
+```bash
+npm run dev
+```
+
+Then open http://localhost:3000.
+
+### Docker option
+
+Start Postgres first, then run the same setup steps:
+
+```bash
+docker compose up -d
+```
+
+### Trying it locally
+
+On the sign-in page, use **Dev login** and pick **Arena Admin** (admin, can see Sync health) or any seeded member. To try onboarding as a new member, dev-login with any new email and use invite code **`ARENA2026`**.
+
+### Troubleshooting
+
+- **`The token '&&' is not a valid statement separator`**: you're on Windows PowerShell 5.1. Run the commands one by one, or use [PowerShell 7](https://aka.ms/powershell).
+- **`Another next dev server is already running`**: stop the old one using the PID in the message. Windows: `taskkill /PID <pid> /F`. Mac/Linux: `kill <pid>`.
+- **`docker` is not recognized / `docker: command not found`**: use a free Neon database instead (see Prerequisites) and skip `docker compose`.
+
+### Syncing real accounts
 
 To sync **real** accounts (anything you link through onboarding), run the worker in a second terminal:
 

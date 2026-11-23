@@ -40,7 +40,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers,
   // JWT sessions: works with the dev Credentials provider and needs no adapter tables.
   session: { strategy: "jwt" },
-  secret: process.env.AUTH_SECRET ?? (isProd ? undefined : "dev-insecure-secret-change-me"),
+  // `||` not `??`: .env.example ships `AUTH_SECRET=` (empty), which must still fall back in dev.
+  secret: process.env.AUTH_SECRET || (isProd ? undefined : "dev-insecure-secret-change-me"),
   trustHost: true,
   pages: { signIn: "/signin" },
   callbacks: {
